@@ -8,15 +8,17 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import kotlin.math.roundToInt
 
 /**
  * 自定义分割线 ：<br/>
  * 可以设置分割线的padding<br/>
  * 可以设置跳过某些分割线<br/>
- * @author junhua.lin@jinfuzi.com<br></br>
+ * @author junhualin<br></br>
  * CREATED 2018/7/4 13:47
  */
-class SimpleItemDecoration(context: Context, orientation: Int) : RecyclerView.ItemDecoration() {
+class SimpleItemDecoration private constructor(context: Context, orientation: Int) :
+    RecyclerView.ItemDecoration() {
 
     interface SkipCallback {
         fun skip(viewPos: Int, itemCount: Int): Boolean
@@ -26,8 +28,15 @@ class SimpleItemDecoration(context: Context, orientation: Int) : RecyclerView.It
         const val HORIZONTAL = LinearLayout.HORIZONTAL
         const val VERTICAL = LinearLayout.VERTICAL
 
-        private const val TAG = "DividerItem"
+        private const val TAG = "SimpleItemDecoration"
         private val ATTRS = intArrayOf(android.R.attr.listDivider)
+
+        /**
+         * 创建SimpleItemDecoration对象
+         */
+        fun create(context: Context, orientation: Int = VERTICAL): SimpleItemDecoration =
+            SimpleItemDecoration(context, orientation)
+
     }
 
     private var mDivider: Drawable? = null
@@ -45,7 +54,6 @@ class SimpleItemDecoration(context: Context, orientation: Int) : RecyclerView.It
     private var isItemOffsets = true
 
     private var mSkipCallback: SkipCallback? = null
-
 
     init {
         val a = context.obtainStyledAttributes(ATTRS)
@@ -107,7 +115,7 @@ class SimpleItemDecoration(context: Context, orientation: Int) : RecyclerView.It
     }
 
     /**
-     * 设置跳过多个分割线
+     * 设置跳过某些个分割线
      */
     fun setSkipList(vararg indexList: Int): SimpleItemDecoration {
         mSkipCallback = object : SkipCallback {
@@ -249,8 +257,8 @@ class SimpleItemDecoration(context: Context, orientation: Int) : RecyclerView.It
         for (i in 0 until childCount) {
             val child = parent.getChildAt(i)
             layoutManager?.getDecoratedBoundsWithMargins(child, mBounds)
-            val right = mBounds.right + Math.round(child.translationX)
-            val left = right - mDivider!!.intrinsicWidth
+            val right = mBounds.right + child.translationX.roundToInt()
+            val left = right - (mDivider?.intrinsicWidth ?: 0)
 
             val viewPos = parent.getChildAdapterPosition(child)
             if (viewPos == RecyclerView.NO_POSITION) {
@@ -259,16 +267,15 @@ class SimpleItemDecoration(context: Context, orientation: Int) : RecyclerView.It
 
             val isSkip = mSkipCallback?.skip(viewPos, itemCount) ?: false
             if (!isSkip) {
-                mDivider!!.setBounds(left, top + mStartPadding, right, bottom - mEndPadding)
-                mDivider!!.draw(canvas)
+                mDivider?.setBounds(left, top + mStartPadding, right, bottom - mEndPadding)
+                mDivider?.draw(canvas)
             }
         }
         canvas.restore()
     }
 
     override fun getItemOffsets(
-        outRect: Rect, view: View, parent: RecyclerView,
-        state: RecyclerView.State
+        outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
     ) {
         if (!isItemOffsets) return
 
@@ -286,15 +293,15 @@ class SimpleItemDecoration(context: Context, orientation: Int) : RecyclerView.It
             return
         }
 
+        val intrinsicHeight = mDivider?.intrinsicHeight ?: 0
         if (mOrientation == VERTICAL) {
-            outRect.set(0, 0, 0, mDivider!!.intrinsicHeight)
+            outRect.set(0, 0, 0, intrinsicHeight)
         } else {
-            outRect.set(0, 0, mDivider!!.intrinsicWidth, 0)
+            outRect.set(0, 0, intrinsicHeight, 0)
         }
     }
 
-    private fun getItemCount(parent: RecyclerView) =
-        if (parent.adapter == null) 0 else parent.adapter!!.itemCount
+    private fun getItemCount(parent: RecyclerView) = parent.adapter?.itemCount ?: 0
 
 
 }
