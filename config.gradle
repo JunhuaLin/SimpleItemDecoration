@@ -1,0 +1,19 @@
+rootProject.ext {
+    android = [
+            compileSdkVersion: 28,
+            buildToolsVersion: "28.0.0",
+            applicationId    : "cn.junhua.simpletitemdecoration",
+            minSdkVersion    : 14,
+            targetSdkVersion : 28,
+            versionCode      : 1,
+            versionName      : "1.0.0"
+    ]
+
+    supportVersion = "28.0.0"
+    supportLib = [
+            "appcompat-v7"   : "com.android.support:appcompat-v7:$supportVersion",
+            "recyclerview-v7": "com.android.support:recyclerview-v7:$supportVersion",
+            "support-annotations": "com.android.support:support-annotations:$supportVersion",
+    ]
+    
+}
