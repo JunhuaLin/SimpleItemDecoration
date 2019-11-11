@@ -1,9 +1,11 @@
 package cn.junhua.android.decoration
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
@@ -19,14 +21,21 @@ import kotlin.math.roundToInt
  */
 class SimpleItemDecoration private constructor(context: Context, orientation: Int) :
     RecyclerView.ItemDecoration() {
-
+    //region callback
+    /**
+     * 分割线是否跳过绘制回调
+     */
     interface SkipCallback {
         fun skip(viewPos: Int, itemCount: Int): Boolean
     }
 
+    //endregion callback
+
+    //region companion
+
     companion object {
-        const val HORIZONTAL = LinearLayout.HORIZONTAL
-        const val VERTICAL = LinearLayout.VERTICAL
+        const val HORIZONTAL = LinearLayoutManager.HORIZONTAL
+        const val VERTICAL = LinearLayoutManager.VERTICAL
 
         private const val TAG = "SimpleItemDecoration"
         private val ATTRS = intArrayOf(android.R.attr.listDivider)
@@ -38,6 +47,9 @@ class SimpleItemDecoration private constructor(context: Context, orientation: In
             SimpleItemDecoration(context, orientation)
 
     }
+    //endregion filed
+
+    //region filed
 
     private var mDivider: Drawable? = null
 
@@ -55,6 +67,10 @@ class SimpleItemDecoration private constructor(context: Context, orientation: In
 
     private var mSkipCallback: SkipCallback? = null
 
+    //endregion filed
+
+    //region init
+
     init {
         val a = context.obtainStyledAttributes(ATTRS)
         mDivider = a.getDrawable(0)
@@ -68,9 +84,12 @@ class SimpleItemDecoration private constructor(context: Context, orientation: In
 
         setOrientation(orientation)
     }
+    //endregion init
+
+    //region api
 
     /**
-     * 是否需要绘制
+     * 是否通过移动item间距产生分割线
      */
     fun setIsItemOffsets(isItemOffsets: Boolean): SimpleItemDecoration {
         this.isItemOffsets = isItemOffsets
@@ -168,6 +187,10 @@ class SimpleItemDecoration private constructor(context: Context, orientation: In
         }
         mDivider = drawable
     }
+
+    //endregion api
+
+    //region private
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         if (isItemOffsets) return
@@ -303,5 +326,5 @@ class SimpleItemDecoration private constructor(context: Context, orientation: In
 
     private fun getItemCount(parent: RecyclerView) = parent.adapter?.itemCount ?: 0
 
-
+    //endregion private
 }
