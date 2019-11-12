@@ -19,16 +19,37 @@ class MainActivity : AppCompatActivity() {
         rv_content = findViewById(R.id.rv_content)
         rv_content.layoutManager = LinearLayoutManager(this, orientation, false)
 
+
+        val simpleItemDecoration = SimpleItemDecoration
+            .create(this, orientation)
+            .setHeight(20f)
+            .enableItemOffsets(true)
+            .setStartPadding(48)
+            .setEndPadding(48)
+            .setDrawable(R.drawable.ic_launcher_background)
+//            .setSkipFirstLast()
+//            .setSkipLast()
+
+
+        val simpleItemDecoration1 = SimpleItemDecoration
+            .create(this, orientation)
+            .setHeight(4f)
+            .enableItemOffsets(true)
+            .setStartPadding(48)
+//            .setEndPadding(48)
+            .setDrawable(R.drawable.red_item_decotation_bg_shape)
+//            .setSkipList(1, 3, 4)
+//            .setSkipFirstLast()
+//            .setSkipLast()
+
+        rv_content.addItemDecoration(simpleItemDecoration)
+        rv_content.addItemDecoration(simpleItemDecoration1)
+
         val adapter = ItemAdapter()
         adapter.dataList = genDataList()
 
         rv_content.adapter = adapter
 
-        val simpleItemDecoration = SimpleItemDecoration
-            .create(this, orientation)
-            .setSkipLast()
-
-        rv_content.addItemDecoration(simpleItemDecoration)
     }
 
     fun genDataList(): MutableList<String> {
